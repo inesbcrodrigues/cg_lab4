@@ -1,11 +1,13 @@
-var p_camera, o_camera, renderer, scene;
-var flag, shading = 1; //shading (flag): 1 - phong shading phong material, 2 - gouraud shading lambert material
+//const THREE = require("./three");
+import { OrbitControls } from './jsm/controls/OrbitControls.js';
+
+var p_camera, renderer, scene;
+var flag, controls;
 var basic = false;     //quando true deixa de haver calculo de iluminação
-var palander, truck;
-var PC, OC;
 
 //Light variables
 //------------------DIRECTIONAL
+var dirLight;
 
 
 
@@ -14,7 +16,6 @@ var PC, OC;
 //===========================================================================================================================
 function init(){
     'use strict';
-    PC = true;
     renderer = new THREE.WebGLRenderer({ antialias : true});
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -37,6 +38,8 @@ function animate() {
     render();
     requestAnimationFrame(animate);
 
+    controls.update();
+
     switch(flag) {
         
     }
@@ -56,20 +59,6 @@ function createScene(){
     scene.background = new THREE.Color("white");
 }
 
-function createCyberTruck() {
-    truck = new THREE.Object3D();
-    createPlane();
-    createPalander();
-    createWheels();
-    createChassis();
-    createBottomPartTruck();
-    createTopPartTruck();
-    createTrunk();
-    createWindows();
-    createLights();
-    groupCyberTruck();
-}
-
 function createPerspCamera(x, y, z){
     'use strict'
     var aspectRatio = window.innerWidth / window.innerHeight;
@@ -81,22 +70,44 @@ function createPerspCamera(x, y, z){
     p_camera.position.z = z;
 
     p_camera.lookAt(scene.position);
+
+    controls = new OrbitControls( p_camera, renderer.domElement );
+    controls.update();
 }
 
-function createOrthoCamera(x, y, z){
-    'use strict';
+function addDirLight(){
+    dirLight  = new THREE.DirectionalLight(0xffffff, 2);
+    dirLight.position.set(61.5, 27, 70);
+    dirLight.target.position.set(37, 5, 29);
 
-    var viewSize = 40;
-    var aspectRatio = window.innerWidth / window.innerHeight;
+    dirLight.updateMatrixWorld();
+    //var LightHelper = new THREE.DirectionalLightHelper(dirLight);
+    dirLight.castShadow = true;
 
-    o_camera = new THREE.OrthographicCamera(-aspectRatio*viewSize/2 + 20, aspectRatio*viewSize/2 + 20,
-        viewSize/2 + 10, -viewSize/2 + 10, 5, 1000);
+    dirLight.shadow.mapSize.width = 512; // default
+    dirLight.shadow.mapSize.height = 512; // default
+    dirLight.shadow.camera.near = 0.5; // default
+    dirLight.shadow.camera.far = 500; // default
 
-    o_camera.position.x = x;
-    o_camera.position.y = y;
-    o_camera.position.z = z;
+    scene.add(LightHelper, dirLight.target);
+    scene.add(dirLight);
+}
 
-    o_camera.lookAt(scene.position);
+function handleDirectionalLight(){
+    dirLight.visible = !dirLight.visible;
+}
+
+function turnOffCalc(){
+    mesh.forEach((obj) => {
+        var bmaterial = new THREE.MeshBasicMaterial({transparent:true});
+        bmaterial.color = obj.material.color;
+        bmaterial.side = obj.material.side;
+        bmaterial.opacity = obj.material.opacity;
+
+        obj.material = bmaterial;
+        obj.geometry.normalsNeedUpdate = true;
+    });
+
 }
 
 //=============================================================================================================================
@@ -105,39 +116,7 @@ function createOrthoCamera(x, y, z){
 function onKeyDown(e) {
     'use strict';
     switch (e.keyCode) {
-        case 49:
-            handleSpotlight1();
-            break;
-        case 50:
-            handleSpotlight2();
-            break;
-        case 51:
-            handleSpotlight3();
-            break;
-        case 52: // 4
-            flag = 52;
-            break;
-        case 53: // 5
-            flag = 53;
-            break;
-        case 37: //right arrow
-            palander.rotation.y -= 0.1;
-            break;
-        case 39: //left arrow
-            palander.rotation.y  += 0.1;
-            break;
-        case 81: //Q
-            handleDirectionalLight();
-            break;
-        case 87: //W
-            flag = 87;
-            basic = !basic;
-            //turn off/on illumination calculations
-        case 69: //E
-            flag = 69;
-            if(shading === 1) shading = 2;
-            else if(shading === 2) shading = 1;
-            //switch between gouraud and phong
+        
     }
 }
 
