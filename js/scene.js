@@ -47,9 +47,6 @@ function animate() {
     updateBallMovement();
 
     switch(flag) {
-        case 66:
-            ballMovement = !ballMovement;
-            break;
     }
 }
 
@@ -125,7 +122,7 @@ function onKeyDown(e) {
     'use strict';
     switch (e.keyCode) {
         case 66:
-            flag = 66;
+            ballMovement = !ballMovement;      
             break;
     }
 }
