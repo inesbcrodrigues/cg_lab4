@@ -12,16 +12,18 @@ var initPos = 0;
 var texture;
 
 function updateBallMovement() {
+    ball.rotation.y += 0.01;
     if (ballMovement) {
-        if(slowDown > 0) {
+        //if(slowDown > 0) {
+            //posx = ball.position.x + slowDown*0.8;
+            //posy = (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
 
-            posx = ball.position.x + 0.8;
-            posy = slowDown * (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
+            posx = ball.position.x + slowDown*0.8;
+            posy = (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
 
             ballHitsGround(posy);
 
             if (ballHitGround) {
-                ref -= 40;
                 ball.position.x = posx;
                 ball.position.y = 2;
                 ballHitGround = false;  
@@ -35,13 +37,14 @@ function updateBallMovement() {
             position.x = posx;
             position.y = 2;
         }
-    }
+    //}
 }
 
 function ballHitsGround(posy) {
     if (posy - ballRadius <= 0) {
         ballHitGround = true;
-        slowDown -= 0.05;
+        slowDown = -slowDown;
+        //slowDown =- 0.01;
     }
 }
 
@@ -57,7 +60,7 @@ function createBall() {
     material = new THREE.MeshPhongMaterial({
         color: "white",
         bumpMap: texture,
-        bumpScale: 1.5,
+        bumpScale: 1,
         specular: 0x050505,
         shininess: 100
     });
