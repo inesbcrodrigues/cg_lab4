@@ -1,7 +1,9 @@
 
+
 //import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
-var p_camera, renderer, scene;
+var p_camera, renderer, scene, meshText;
 var mesh = [];
+var pause = false;
 var flag, controls;
 var ilum = true;     //quando true deixa de haver calculo de iluminação
 
@@ -30,6 +32,7 @@ function init(){
     addDirLight();
     addPointLight();
     createSkyBox();
+    writePause();
 
     var axis = new THREE.AxisHelper(30);
 
@@ -50,7 +53,7 @@ function animate() {
     render();
     requestAnimationFrame(animate);
 
-    controls.update();
+    //controls.update();
     updateBallMovement();
 
     switch(flag) {
@@ -89,8 +92,8 @@ function createPerspCamera(x, y, z){
 
     p_camera.lookAt(scene.position);
 
-    controls = new OrbitControls(/* p_camera, renderer.domElement */);
-    constrols.enabled = true;
+    //controls = new OrbitControls(/* p_camera, renderer.domElement */);
+    //constrols.enabled = true;
 
 }
 
@@ -133,11 +136,14 @@ function onKeyDown(e) {
         case 66:
             ballMovement = !ballMovement;      
             break;
-        case 68:
+        case 68://d
             handleDirectionalLight();
             break;
-        case 80:
+        case 80://p
             handlePointLight();
+            break;
+        case 83:
+            pauseScreen();
             break;
         case 87: //W
             handleWireframe();
@@ -199,5 +205,50 @@ function handleWireframe(){
     mesh.forEach((obj) => {
         obj.material.wireframe = ! obj.material.wireframe;
     });
+}
+
+function writePause(){
+    //var texture = new THREE.TextureLoader().load("pause.txt");
+    //var material = new MeshBasicMaterial({map: texture, color: "green"});
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+
+    context.font = "normal " + 11 + "px Arial";
+
+    var margin = 2;
+    var textWidth = context.measureText("PAUSE").width;
+    canvas.width = 32;
+    canvas.height = 16;
+
+    context.strokeStyle = "white";
+    context.strokeRect(0, 0, canvas.width, canvas.height);
+
+    context.strokeStyle = "red";
+    context.strokeRect(canvas.width / 2 - textWidth / 2 - margin / 2, canvas.height / 2 - 16 / 2  +margin / 2, textWidth + margin, 16 + margin);
+
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillStyle = "green";
+    context.fillText("PAUSE", textWidth / 2, 16 / 2);
+
+    var texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+
+    var material = new THREE.MeshBasicMaterial({map : texture});
+
+    meshText = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height, 10, 10), material);
+    meshText.overdraw = true;
+    meshText.doubleSided = true;
+    meshText.position.set(0,16,0);
+    scene.add(meshText);
+    meshText.visible = false;
+}
+
+function pauseScreen(){
+    pause = !pause;
+    meshText.visible = !meshText.visible;
+    if (pause){
+        
+    }
 }
 
