@@ -25,6 +25,7 @@ function init(){
     createScene();
 
     createPerspCamera(90, 25, 80);
+    addGrassPlane();
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener('resize', onWindowResize, false );
@@ -38,7 +39,7 @@ function animate() {
     render();
     requestAnimationFrame(animate);
 
-    controls.update();
+    //controls.update();
 
     switch(flag) {
         
