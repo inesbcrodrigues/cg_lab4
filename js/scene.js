@@ -29,10 +29,11 @@ function init(){
 
     createScene();
     addDirLight();
+    addPointLight();
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(0, 50, 100);
+    createPerspCamera(0, 50, 200);
     addGrassPlane();
     createBall();
 
@@ -104,12 +105,43 @@ function handleDirectionalLight(){
 }
 
 function addPointLight(){
-    pointLight = new THREE.PointLight(0xffffff, 2);
-    pointLight.position.set(0, 1, 40);
+    pointLight = new THREE.PointLight(0xffffff, 10);
+    pointLight.position.set(0, 1, 40); //este z é bom o suficiente para "sobre o relvado"?
     var PLightHelper = new THREE.PointLightHelper(pointLight, 3);
 
     scene.add(pointLight);
     scene.add(PLightHelper, pointLight.target);
+}
+
+function handlePointLight(){
+    pointLight.visible = !pointLight.visible;
+}
+
+//=============================================================================================================================
+//QUICKTIME EVENTS
+//=============================================================================================================================
+function onKeyDown(e) {
+    'use strict';
+    switch (e.keyCode) {
+        case 66:
+            ballMovement = !ballMovement;      
+            break;
+        case 68:
+            handleDirectionalLight();
+            break;
+        case 80:
+            handlePointLight();
+            break;
+        case 87:
+            handleWireframe();
+    }
+}
+
+function onWindowResize(){
+    p_camera.aspect = window.innerWidth / window.innerHeight;
+    p_camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function turnOffCalc(){
@@ -125,22 +157,9 @@ function turnOffCalc(){
 
 }
 
-//=============================================================================================================================
-//QUICKTIME EVENTS
-//=============================================================================================================================
-function onKeyDown(e) {
-    'use strict';
-    switch (e.keyCode) {
-        case 66:
-            ballMovement = !ballMovement;      
-            break;
-    }
-}
-
-function onWindowResize(){
-    p_camera.aspect = window.innerWidth / window.innerHeight;
-    p_camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
+function handleWireframe(){
+    mesh.forEach((obj) => {
+        obj.material.wireframe = ! obj.material.wireframe;
+    });
 }
 
