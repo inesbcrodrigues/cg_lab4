@@ -1,5 +1,5 @@
 //const THREE = require("./three");
-import { OrbitControls } from './jsm/controls/OrbitControls.js';
+//import { OrbitControls } from './jsm/controls/OrbitControls.js';
 
 var p_camera, renderer, scene;
 var flag, controls;
@@ -71,8 +71,8 @@ function createPerspCamera(x, y, z){
 
     p_camera.lookAt(scene.position);
 
-    controls = new OrbitControls( p_camera, renderer.domElement );
-    controls.update();
+    //controls = new OrbitControls( p_camera, renderer.domElement );
+    //controls.update();
 }
 
 function addDirLight(){
