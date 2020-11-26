@@ -31,12 +31,12 @@ function init(){
     createScene();
     addDirLight();
     addPointLight();
-    createSkyBox();
+    //createSkyBox();
     writePause();
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(0, 50, 200);
+    createPerspCamera(0, 20, 150);
     addGrassPlane();
     createBall();
 
@@ -115,7 +115,7 @@ function handleDirectionalLight(){
 }
 
 function addPointLight(){
-    pointLight = new THREE.PointLight(0xffffff, 10);
+    pointLight = new THREE.PointLight(0xffffff, 2);
     pointLight.position.set(0, 1, 40); //este z é bom o suficiente para "sobre o relvado"?
     var PLightHelper = new THREE.PointLightHelper(pointLight, 3);
 
