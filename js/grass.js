@@ -9,7 +9,7 @@ function addGrassPlane(){
     texture.repeat.set(50,50);
     var bMap = new THREE.TextureLoader().load("grassBump.jpg");
 
-    var geometry = new THREE.PlaneBufferGeometry(1000, 1000, 100, 100);
+    var geometry = new THREE.PlaneBufferGeometry(500, 500, 100, 100);
     var material = new THREE.MeshPhongMaterial({map:texture, bumpMap: bMap});
 
     pmesh = new THREE.Mesh(geometry, material);
