@@ -1,6 +1,5 @@
-//const THREE = require("./three");
-//import { OrbitControls } from './jsm/controls/OrbitControls.js';
 
+//import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 var p_camera, renderer, scene;
 var mesh = [];
 var flag, controls;
@@ -30,6 +29,7 @@ function init(){
     createScene();
     addDirLight();
     addPointLight();
+    createSkyBox();
 
     var axis = new THREE.AxisHelper(30);
 
@@ -50,7 +50,7 @@ function animate() {
     render();
     requestAnimationFrame(animate);
 
-    //controls.update();
+    controls.update();
     updateBallMovement();
 
     switch(flag) {
@@ -89,8 +89,9 @@ function createPerspCamera(x, y, z){
 
     p_camera.lookAt(scene.position);
 
-    //controls = new OrbitControls( p_camera, renderer.domElement );
-    //controls.update();
+    controls = new OrbitControls(/* p_camera, renderer.domElement */);
+    constrols.enabled = true;
+
 }
 
 function addDirLight(){
@@ -102,7 +103,7 @@ function addDirLight(){
     var LightHelper = new THREE.DirectionalLightHelper(dirLight);
     dirLight.castShadow = true;
 
-    scene.add(LightHelper, dirLight.target);
+    scene.add(LightHelper);
     scene.add(dirLight);
 }
 
@@ -116,7 +117,7 @@ function addPointLight(){
     var PLightHelper = new THREE.PointLightHelper(pointLight, 3);
 
     scene.add(pointLight);
-    scene.add(PLightHelper, pointLight.target);
+    scene.add(PLightHelper);
 }
 
 function handlePointLight(){
