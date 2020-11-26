@@ -25,7 +25,7 @@ function init(){
     createScene();
     addDirLight();
 
-    createPerspCamera(90, 25, 80);
+    createPerspCamera(90, 25, 0);
     addGrassPlane();
 
     window.addEventListener("keydown", onKeyDown);
@@ -79,17 +79,12 @@ function createPerspCamera(x, y, z){
 
 function addDirLight(){
     dirLight  = new THREE.DirectionalLight(0xffffff, 2);
-    dirLight.position.set(61.5, 27, 70);
-    dirLight.target.position.set(37, 5, 29);
+    dirLight.position.set(100, 50, 70);
+    dirLight.target.position.set(0, 0, 0);
 
     dirLight.updateMatrixWorld();
     //var LightHelper = new THREE.DirectionalLightHelper(dirLight);
     dirLight.castShadow = true;
-
-    dirLight.shadow.mapSize.width = 512; // default
-    dirLight.shadow.mapSize.height = 512; // default
-    dirLight.shadow.camera.near = 0.5; // default
-    dirLight.shadow.camera.far = 500; // default
 
     //scene.add(LightHelper, dirLight.target);
     scene.add(dirLight);
