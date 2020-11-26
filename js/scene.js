@@ -36,7 +36,7 @@ function init(){
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(0, 20, 150);
+    createPerspCamera(0, 20, 80);
     addGrassPlane();
     createBall();
 
