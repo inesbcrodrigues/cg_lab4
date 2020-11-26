@@ -23,6 +23,7 @@ function init(){
     document.body.appendChild(renderer.domElement);
 
     createScene();
+    addDirLight();
 
     createPerspCamera(90, 25, 80);
     addGrassPlane();
@@ -90,7 +91,7 @@ function addDirLight(){
     dirLight.shadow.camera.near = 0.5; // default
     dirLight.shadow.camera.far = 500; // default
 
-    scene.add(LightHelper, dirLight.target);
+    //scene.add(LightHelper, dirLight.target);
     scene.add(dirLight);
 }
 
