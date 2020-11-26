@@ -2,9 +2,9 @@
 //import { OrbitControls } from './jsm/controls/OrbitControls.js';
 
 var p_camera, renderer, scene;
-var mesh =[];
+var mesh = [];
 var flag, controls;
-var basic = false;     //quando true deixa de haver calculo de iluminação
+var ilum = true;     //quando true deixa de haver calculo de iluminação
 
 //Light variables
 //------------------DIRECTIONAL
@@ -54,7 +54,11 @@ function animate() {
     updateBallMovement();
 
     switch(flag) {
+
+
     }
+
+    rotateFlag();
 }
 
 function render(){
@@ -69,6 +73,8 @@ function createScene(){
     'use strict';
     scene = new THREE.Scene();
     scene.background = new THREE.Color("white");
+
+    createFlag();
 }
 
 function createPerspCamera(x, y, z){
@@ -132,8 +138,21 @@ function onKeyDown(e) {
         case 80:
             handlePointLight();
             break;
-        case 87:
+        case 87: //W
             handleWireframe();
+            break;
+        case 73: //I
+            if(ilum){
+                turnOffCalc();
+                console.log("turned off")
+            }
+            else {
+                turnOnCalc();
+                console.log("turn on")
+            }
+            ilum = !ilum;
+            break;
+            
     }
 }
 
@@ -146,15 +165,33 @@ function onWindowResize(){
 
 function turnOffCalc(){
     mesh.forEach((obj) => {
-        var bmaterial = new THREE.MeshBasicMaterial({transparent:true});
+        let bmaterial = new THREE.MeshBasicMaterial();
         bmaterial.color = obj.material.color;
         bmaterial.side = obj.material.side;
-        bmaterial.opacity = obj.material.opacity;
+        bmaterial.map = obj.material.map;
+        bmaterial.bumpMap = obj.material.bumpMap;
 
         obj.material = bmaterial;
         obj.geometry.normalsNeedUpdate = true;
     });
 
+}
+
+function turnOnCalc(){
+    mesh.forEach((obj) => {
+        let pmaterial = new THREE.MeshPhongMaterial();
+        pmaterial.color = obj.material.color;
+        pmaterial.map = obj.material.map;
+        pmaterial.bumpMap = obj.material.bumpMap;
+        //pmaterial.shininess = obj.material.shininess;
+        //pmaterial.specular = obj.material.specular;
+
+        pmaterial.shading = THREE.SmoothShading;
+        pmaterial.needsUpdate = true;
+
+        obj.material = pmaterial;
+        obj.geometry.normalsNeedUpdate = true;
+    });
 }
 
 function handleWireframe(){
