@@ -2,12 +2,15 @@
 //import { OrbitControls } from './jsm/controls/OrbitControls.js';
 
 var p_camera, renderer, scene;
+var mesh =[];
 var flag, controls;
 var basic = false;     //quando true deixa de haver calculo de iluminação
 
 //Light variables
 //------------------DIRECTIONAL
 var dirLight;
+//------------------POINT
+var pointLight;
 
 // Variable to control ball movement
 var ballMovement = false;
@@ -27,12 +30,15 @@ function init(){
     createScene();
     addDirLight();
 
-    createPerspCamera(90, 25, 80);
+    var axis = new THREE.AxisHelper(30);
+
+    createPerspCamera(0, 50, 100);
     addGrassPlane();
     createBall();
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener('resize', onWindowResize, false );
+    scene.add(axis);
 }
 
 //=============================================================================================================================
@@ -86,20 +92,24 @@ function addDirLight(){
     dirLight.target.position.set(37, 5, 29);
 
     dirLight.updateMatrixWorld();
-    //var LightHelper = new THREE.DirectionalLightHelper(dirLight);
+    var LightHelper = new THREE.DirectionalLightHelper(dirLight);
     dirLight.castShadow = true;
 
-    dirLight.shadow.mapSize.width = 512; // default
-    dirLight.shadow.mapSize.height = 512; // default
-    dirLight.shadow.camera.near = 0.5; // default
-    dirLight.shadow.camera.far = 500; // default
-
-    //scene.add(LightHelper, dirLight.target);
+    scene.add(LightHelper, dirLight.target);
     scene.add(dirLight);
 }
 
 function handleDirectionalLight(){
     dirLight.visible = !dirLight.visible;
+}
+
+function addPointLight(){
+    pointLight = new THREE.PointLight(0xffffff, 2);
+    pointLight.position.set(0, 1, 40);
+    var PLightHelper = new THREE.PointLightHelper(pointLight, 3);
+
+    scene.add(pointLight);
+    scene.add(PLightHelper, pointLight.target);
 }
 
 function turnOffCalc(){
