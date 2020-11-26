@@ -9,7 +9,9 @@ var basic = false;     //quando true deixa de haver calculo de iluminação
 //------------------DIRECTIONAL
 var dirLight;
 
-
+// Variable to control ball movement
+var ballMovement = false;
+var flag;
 
 //===========================================================================================================================
 //FUNCTIONS==================================================================================================================
@@ -25,8 +27,9 @@ function init(){
     createScene();
     addDirLight();
 
-    createPerspCamera(90, 25, 0);
+    createPerspCamera(90, 25, 80);
     addGrassPlane();
+    createBall();
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener('resize', onWindowResize, false );
@@ -41,9 +44,12 @@ function animate() {
     requestAnimationFrame(animate);
 
     //controls.update();
+    updateBallMovement();
 
     switch(flag) {
-        
+        case 66:
+            ballMovement = !ballMovement;
+            break;
     }
 }
 
@@ -79,12 +85,17 @@ function createPerspCamera(x, y, z){
 
 function addDirLight(){
     dirLight  = new THREE.DirectionalLight(0xffffff, 2);
-    dirLight.position.set(100, 50, 70);
-    dirLight.target.position.set(0, 0, 0);
+    dirLight.position.set(61.5, 27, 70);
+    dirLight.target.position.set(37, 5, 29);
 
     dirLight.updateMatrixWorld();
     //var LightHelper = new THREE.DirectionalLightHelper(dirLight);
     dirLight.castShadow = true;
+
+    dirLight.shadow.mapSize.width = 512; // default
+    dirLight.shadow.mapSize.height = 512; // default
+    dirLight.shadow.camera.near = 0.5; // default
+    dirLight.shadow.camera.far = 500; // default
 
     //scene.add(LightHelper, dirLight.target);
     scene.add(dirLight);
@@ -113,7 +124,9 @@ function turnOffCalc(){
 function onKeyDown(e) {
     'use strict';
     switch (e.keyCode) {
-        
+        case 66:
+            flag = 66;
+            break;
     }
 }
 
