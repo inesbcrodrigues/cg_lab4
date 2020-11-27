@@ -45,16 +45,11 @@ function createBall() {
         clearcoat: 10,
         shininess: 100,
         bumpMap: texture,
-        bumpScale: 0.04,
+        bumpScale: 0.05,
         clearcoatMap: clearcoatMap,
         clearCoatMapScale: new THREE.Vector2( 2.0, - 2.0)
     });
 
-    
-
-    var envMap = new THREE.TextureLoader().load('envMap.png');
-    envMap.mapping = THREE.SphericalReflectionMapping;
-    material.envMap = envMap;
 
     ball = new THREE.Mesh(geometry, material);
     ball.position.set(0, 2, 0);
