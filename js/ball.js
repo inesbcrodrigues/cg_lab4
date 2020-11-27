@@ -2,6 +2,7 @@ var geometry, material, ball;
 var ballRadius = 2;
 var posx, posy;
 var ballHitGround = false;
+var slowDown = 1;
 var texture;
 
 function updateBallMovement() {
