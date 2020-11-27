@@ -1,52 +1,33 @@
 var geometry, material, ball;
 var ballRadius = 2;
-var vz = 10;
-var delta = 0;
-var g = 5;
 var posx, posy;
 var ballHitGround = false;
-var slowDown = 1;
-var first_mov = true;
-var ref = 0;
-var initPos = 0;
 var texture;
 
 function updateBallMovement() {
     ball.rotation.y += 0.01;
     if (ballMovement) {
-        //if(slowDown > 0) {
-            //posx = ball.position.x + slowDown*0.8;
-            //posy = (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
+        posx = ball.position.x + slowDown*0.8;
+        posy = (-((posx - 20) * ((posx - 20) / 40)) + 12);
 
-            posx = ball.position.x + slowDown*0.8;
-            posy = (-((posx - 20) * ((posx - 20) / 40)) + 12);
+        ballHitsGround(posy);
 
-            ballHitsGround(posy);
-
-            if (ballHitGround) {
-                ball.position.x = posx;
-                ball.position.y = 2;
-                ballHitGround = false;  
-            }
-            else {
-                ball.position.x = posx;
-                ball.position.y = posy;
-            }
+        if (ballHitGround) {
+            ball.position.x = posx;
+            ball.position.y = 2;
+            ballHitGround = false;  
         }
-        /*
-            else {
-                position.x = posx;
-                position.y = 2;
-            }
-        */
-    //}
+        else {
+            ball.position.x = posx;
+            ball.position.y = posy;
+        }
+    }
 }
 
 function ballHitsGround(posy) {
     if (posy - ballRadius <= 0) {
         ballHitGround = true;
         slowDown = -slowDown;
-        //slowDown =- 0.01;
     }
 }
 
