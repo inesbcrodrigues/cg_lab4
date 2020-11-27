@@ -19,7 +19,7 @@ function updateBallMovement() {
             //posy = (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
 
             posx = ball.position.x + slowDown*0.8;
-            posy = (-((posx + ref - 20) * ((posx + ref - 20) / 40)) + 12);
+            posy = (-((posx - 20) * ((posx - 20) / 40)) + 12);
 
             ballHitsGround(posy);
 
@@ -33,10 +33,12 @@ function updateBallMovement() {
                 ball.position.y = posy;
             }
         }
-        else {
-            position.x = posx;
-            position.y = 2;
-        }
+        /*
+            else {
+                position.x = posx;
+                position.y = 2;
+            }
+        */
     //}
 }
 
