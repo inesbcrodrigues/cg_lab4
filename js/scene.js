@@ -22,7 +22,7 @@ var flag;
 //===========================================================================================================================
 function init(){
     'use strict';
-    renderer = new THREE.WebGLRenderer({ antialias : true});
+    renderer = new THREE.WebGLRenderer({ antialias : true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMap.enabled = true;
@@ -31,12 +31,12 @@ function init(){
     createScene();
     addDirLight();
     addPointLight();
-    //createSkyBox();
+    createSkyBox();
     writePause();
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(0, 20, 80);
+    createPerspCamera(30, 20, 80);
     addGrassPlane();
     createBall();
 
@@ -54,17 +54,15 @@ function animate() {
     requestAnimationFrame(animate);
 
     //controls.update();
-    updateBallMovement();
-
-    switch(flag) {
-
-
+    if(!pause){
+        updateBallMovement();
+        rotateFlag();
     }
-
-    rotateFlag();
+   
 }
 
 function render(){
+    controls.update();
     renderer.render(scene, p_camera);
 }
 
@@ -90,11 +88,16 @@ function createPerspCamera(x, y, z){
     p_camera.position.y = y;
     p_camera.position.z = z;
 
-    p_camera.lookAt(scene.position);
+    p_camera.lookAt(flag.position);
 
-    //controls = new OrbitControls(/* p_camera, renderer.domElement */);
-    //constrols.enabled = true;
+    controls = new THREE.OrbitControls(p_camera, renderer.domElement);
+    controls.update();
 
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
+}
+
+function onDocumentMouseMove( event ) {
+    controls.handleMouseMoveRotate(event);
 }
 
 function addDirLight(){
@@ -115,8 +118,8 @@ function handleDirectionalLight(){
 }
 
 function addPointLight(){
-    pointLight = new THREE.PointLight(0xffffff, 3);
-    pointLight.position.set(0, 1, 0); //este z é bom o suficiente para "sobre o relvado"?
+    pointLight = new THREE.PointLight(0xffffff, 1.5);
+    pointLight.position.set(20, 2, -20); //este z é bom o suficiente para "sobre o relvado"?
 
     scene.add(pointLight);
 }
@@ -139,6 +142,9 @@ function onKeyDown(e) {
             break;
         case 80://p
             handlePointLight();
+            break;
+        case 82: //R
+            if (pause) handleReset();
             break;
         case 83:
             pauseScreen();
@@ -245,8 +251,10 @@ function writePause(){
 function pauseScreen(){
     pause = !pause;
     meshText.visible = !meshText.visible;
-    if (pause){
-        
-    }
+}
+
+function handleReset(){
+    ball.position.set(0, 2, 0);
+    pauseScreen();
 }
 

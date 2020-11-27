@@ -1,12 +1,15 @@
 var flag;
-const POLE_LENGTH = 30;
-const POLE_RADIUS = 0.4;
-const CLOTH_WIDTH = 4;
-const CLOTH_HEIGHT = 3;
+const POLE_LENGTH = 20;
+const POLE_RADIUS = 0.25;
+const CLOTH_WIDTH = 1.5*2;
+const CLOTH_HEIGHT = 1.25*2;
+const CLOTH_DEPTH = 0.4;
 
 function createFlag(){
     createPole();
     addCloth();
+    flag.position.x = 20;
+    flag.position.z = -10;
     scene.add(flag);
 }
 
@@ -17,12 +20,12 @@ function createPole(){
     material.shading = THREE.SmoothShading;
 
     flag = new THREE.Mesh(geometry, material);
-    flag.position.y = 15;
+    flag.position.y = POLE_LENGTH/2;
     mesh[1] = flag;
 }
 
 function addCloth(){
-    let geometry = new THREE.BoxBufferGeometry(CLOTH_WIDTH, CLOTH_HEIGHT, 0.4);
+    let geometry = new THREE.BoxBufferGeometry(CLOTH_WIDTH, CLOTH_HEIGHT, CLOTH_DEPTH);
 
     let material = new THREE.MeshPhongMaterial({ color: "red", shininess: 100 });
     material.shading = THREE.SmoothShading;

@@ -8,7 +8,6 @@ var ballHitGround = false;
 var slowDown = 1;
 var first_mov = true;
 var ref = 0;
-var initPos = 0;
 var texture;
 
 function updateBallMovement() {

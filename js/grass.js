@@ -6,11 +6,13 @@ function addGrassPlane(){
     var texture = new THREE.TextureLoader().load("grasstexture.jpg");
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(50,50);
-    var bMap = new THREE.TextureLoader().load("grassBump.jpg");
+    texture.repeat.set(10,10);
+    var bMap = new THREE.TextureLoader().load("grass2.jpg");
+    bMap.wrapS = THREE.RepeatWrapping;
+    bMap.wrapT = THREE.RepeatWrapping;
 
-    var geometry = new THREE.PlaneBufferGeometry(500, 500, 100, 100);
-    var material = new THREE.MeshPhongMaterial({map:texture, bumpMap: bMap});
+    var geometry = new THREE.PlaneBufferGeometry(100, 100, 50, 50);
+    var material = new THREE.MeshPhongMaterial({map:texture, bumpMap: bMap, bumpScale: 5});
 
     pmesh = new THREE.Mesh(geometry, material);
     pmesh.rotateX(Math.PI/2);
