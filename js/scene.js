@@ -2,7 +2,8 @@
 
 //import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 var p_camera, renderer, scene, meshText;
-var mesh = [];
+let mesh = [];
+let materials = [];
 var pause = false;
 var flag, controls;
 var ilum = true;     //quando true deixa de haver calculo de iluminação
@@ -36,7 +37,7 @@ function init(){
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(30, 20, 80);
+    createPerspCamera(-50, 30, -50);
     addGrassPlane();
     createBall();
 
@@ -189,18 +190,9 @@ function turnOffCalc(){
 }
 
 function turnOnCalc(){
+    let counter = 0;
     mesh.forEach((obj) => {
-        let pmaterial = new THREE.MeshPhongMaterial();
-        pmaterial.color = obj.material.color;
-        pmaterial.map = obj.material.map;
-        pmaterial.bumpMap = obj.material.bumpMap;
-        //pmaterial.shininess = obj.material.shininess;
-        //pmaterial.specular = obj.material.specular;
-
-        pmaterial.shading = THREE.SmoothShading;
-        pmaterial.needsUpdate = true;
-
-        obj.material = pmaterial;
+        obj.material = materials[counter++];
         obj.geometry.normalsNeedUpdate = true;
     });
 }

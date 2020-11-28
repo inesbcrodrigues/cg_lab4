@@ -1,4 +1,4 @@
-var geometry, material, ball, clearcoat;
+var geometry, ball, clearcoat;
 var ballRadius = 2;
 var posx, posy;
 var ballHitGround = false;
@@ -35,23 +35,21 @@ function ballHitsGround(posy) {
 function createBall() {
 
     texture = new THREE.TextureLoader().load( "golf.jpg");
-    clearcoatMap = new THREE.TextureLoader().load( "clearCoat.png" );
 
     geometry = new THREE.SphereGeometry(ballRadius, 32, 32);
 
-    material = new THREE.MeshPhysicalMaterial({
+    materials[3] = new THREE.MeshPhysicalMaterial({
         metalness: 0.2,
         roughness: 0.0,
         clearcoat: 10,
         shininess: 100,
         bumpMap: texture,
-        bumpScale: 0.05,
-        clearcoatMap: clearcoatMap,
-        clearCoatMapScale: new THREE.Vector2( 2.0, - 2.0)
+        bumpScale: 0.05
     });
 
 
-    ball = new THREE.Mesh(geometry, material);
+    ball = new THREE.Mesh(geometry, materials[3]);
     ball.position.set(0, 2, 0);
+    mesh[3] = ball;
     scene.add(ball);
 }
