@@ -1,7 +1,5 @@
-
-
-//import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
-var p_camera, renderer, scene, meshText;
+var p_camera, o_camera, renderer, scene, meshText;
+var PC, OC;
 let mesh = [];
 let materials = [];
 var pause = false;
@@ -28,6 +26,8 @@ function init(){
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMap.enabled = true;
     document.body.appendChild(renderer.domElement);
+    PC = true;
+    OC = false;
 
     createScene();
     addDirLight();
@@ -55,18 +55,26 @@ function animate() {
     requestAnimationFrame(animate);
 
     //controls.update();
-    if(!pause){
+
+    if (!pause){
         updateBallMovement();
         rotateFlag();
     }
+
+    
+
    
 }
 
 function render(){
     controls.update();
-    renderer.render(scene, p_camera);
+    if (PC){
+        renderer.render(scene, p_camera);
+    }
+    else if(OC) {
+        renderer.render(scene, o_camera);
+    }
 }
-
 
 //=============================================================================================================================
 //SETTING THE SCENE - CREATION AND CAMERAS
@@ -95,6 +103,22 @@ function createPerspCamera(x, y, z){
     controls.update();
 
     document.addEventListener('mousemove', onDocumentMouseMove, false);
+}
+
+function createOrthoCamera(x, y, z){
+    'use strict';
+
+    var viewSize = 40;
+    var aspectRatio = window.innerWidth / window.innerHeight;
+
+    o_camera = new THREE.OrthographicCamera(-aspectRatio*viewSize/2, aspectRatio*viewSize/2 ,
+        viewSize/2 + 10, -viewSize/2 + 10, 5, 1000);
+
+    o_camera.position.x = x;
+    o_camera.position.y = y;
+    o_camera.position.z = z;
+
+    o_camera.lookAt(scene.position);
 }
 
 function onDocumentMouseMove( event ) {
@@ -204,9 +228,9 @@ function handleWireframe(){
 }
 
 function writePause(){
-    //var texture = new THREE.TextureLoader().load("pause.txt");
-    //var material = new MeshBasicMaterial({map: texture, color: "green"});
-    var canvas = document.createElement('canvas');
+    var texture = new THREE.TextureLoader().load("pauseTexture.jpg");
+    var material = new THREE.MeshBasicMaterial({map: texture});
+    /*var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
 
     context.font = "normal " + 11 + "px Arial";
@@ -230,12 +254,12 @@ function writePause(){
     var texture = new THREE.Texture(canvas);
     texture.needsUpdate = true;
 
-    var material = new THREE.MeshBasicMaterial({map : texture});
+    var material = new THREE.MeshBasicMaterial({map : texture});*/
 
-    meshText = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height, 10, 10), material);
+    meshText = new THREE.Mesh(new THREE.PlaneGeometry(40,20, 10, 10), material);
     meshText.overdraw = true;
     meshText.doubleSided = true;
-    meshText.position.set(0,16,0);
+    meshText.position.set(0,16,40);
     scene.add(meshText);
     meshText.visible = false;
 }
@@ -243,10 +267,22 @@ function writePause(){
 function pauseScreen(){
     pause = !pause;
     meshText.visible = !meshText.visible;
+    if (pause){
+        PC = false;
+        OC = true;
+        createOrthoCamera(0, 0, 50);
+    }
+    else{
+        PC = true;
+        OC = false;
+        //controls.update();
+        createPerspCamera(-50, 30, -50);
+    }
 }
 
 function handleReset(){
     ball.position.set(0, 2, 0);
+    slowDown = 1;
     pauseScreen();
 }
 
