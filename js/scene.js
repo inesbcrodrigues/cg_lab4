@@ -26,13 +26,6 @@ var views = [
         background: new THREE.Color( 0.5, 0.5, 0.7 ),
         eye: [ 0, 300, 1800 ],
         up: [ 0, 1, 0 ],
-        /*updateCamera: function ( camera, scene, mouseX ) {
-
-          camera.position.x += mouseX * 0.05;
-          camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-          camera.lookAt( scene.position );
-
-        }*/
     },
     {   //Vista pausa
         left: 0.5,
@@ -57,6 +50,8 @@ function init(){
     document.body.appendChild(renderer.domElement);
     PC = true;
     OC = false;
+    createPerspCamera(-50, 30, -50);
+    createOrthoCamera(0, 0, 50);
 
     for ( let ii = 0; ii < views.length; ++ ii ) {
 
@@ -76,7 +71,6 @@ function init(){
 
     var axis = new THREE.AxisHelper(30);
 
-    createPerspCamera(-50, 30, -50);
     addGrassPlane();
     createBall();
 
@@ -336,7 +330,6 @@ function pauseScreen(){
     else{
         PC = true;
         OC = false;
-        //controls.update();
         createPerspCamera(-50, 30, -50);
     }
 }
