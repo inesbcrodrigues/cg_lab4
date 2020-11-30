@@ -1,4 +1,4 @@
-var p_camera, o_camera, renderer, scene, meshText;
+var camera, p_camera, o_camera, renderer, scene, meshText;
 var PC, OC;
 let mesh = [];
 let materials = [];
@@ -16,6 +16,36 @@ var pointLight;
 var ballMovement = false;
 var flag;
 
+//Viewport Vector
+var views = [
+    {
+        left: 0,
+        bottom: 0,
+        width: 0.5,
+        height: 1.0,
+        background: new THREE.Color( 0.5, 0.5, 0.7 ),
+        eye: [ 0, 300, 1800 ],
+        up: [ 0, 1, 0 ],
+        fov: 30,
+        /*updateCamera: function ( camera, scene, mouseX ) {
+
+          camera.position.x += mouseX * 0.05;
+          camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
+          camera.lookAt( scene.position );
+
+        }*/
+    },
+    {
+        left: 0.5,
+        bottom: 0,
+        width: 0.5,
+        height: 0.5,
+        background: new THREE.Color( 0.7, 0.5, 0.5 ),
+        eye: [ 0, 1800, 0 ],
+        up: [ 0, 0, 1 ]
+    }
+]
+
 //===========================================================================================================================
 //FUNCTIONS==================================================================================================================
 //===========================================================================================================================
@@ -28,6 +58,16 @@ function init(){
     document.body.appendChild(renderer.domElement);
     PC = true;
     OC = false;
+
+    for ( let ii = 0; ii < views.length; ++ ii ) {
+
+        const view = views[ ii ];
+        camera.position.fromArray( view.eye );
+        camera.up.fromArray( view.up );
+        if (ii == 0) view.camera = p_camera;
+        else view.camera = o_camera;
+
+    }
 
     createScene();
     addDirLight();
@@ -60,20 +100,42 @@ function animate() {
         updateBallMovement();
         rotateFlag();
     }
-
-    
-
-   
 }
 
 function render(){
     controls.update();
-    if (PC){
+    for ( let ii = 0; ii < views.length; ++ ii ) {
+
+        if (pause && ii == 0) continue;
+        if (!pause && ii == 1) continue;
+
+        const view = views[ ii ];
+        const camera = view.camera;
+
+        //view.updateCamera( camera, scene, mouseX, mouseY );
+
+        const left = Math.floor( windowWidth * view.left );
+        const bottom = Math.floor( windowHeight * view.bottom );
+        const width = Math.floor( windowWidth * view.width );
+        const height = Math.floor( windowHeight * view.height );
+
+        renderer.setViewport( left, bottom, width, height );
+        renderer.setScissor( left, bottom, width, height );
+        renderer.setScissorTest( true );
+        renderer.setClearColor( view.background );
+
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+
+        renderer.render( scene, camera );
+
+    }
+    /*if (PC){
         renderer.render(scene, p_camera);
     }
     else if(OC) {
         renderer.render(scene, o_camera);
-    }
+    }*/
 }
 
 //=============================================================================================================================
