@@ -18,7 +18,7 @@ var flag;
 
 //Viewport Vector
 var views = [
-    {
+    { //Vista perspetiva 
         left: 0,
         bottom: 0,
         width: 0.5,
@@ -26,7 +26,6 @@ var views = [
         background: new THREE.Color( 0.5, 0.5, 0.7 ),
         eye: [ 0, 300, 1800 ],
         up: [ 0, 1, 0 ],
-        fov: 30,
         /*updateCamera: function ( camera, scene, mouseX ) {
 
           camera.position.x += mouseX * 0.05;
@@ -35,7 +34,7 @@ var views = [
 
         }*/
     },
-    {
+    {   //Vista pausa
         left: 0.5,
         bottom: 0,
         width: 0.5,
