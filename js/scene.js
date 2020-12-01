@@ -24,8 +24,8 @@ var views = [
         width: 0.5,
         height: 1.0,
         background: new THREE.Color( 0.5, 0.5, 0.7 ),
-        eye: [ 0, 300, 1800 ],
-        up: [ 0, 1, 0 ],
+        eye: THREE.Vector3( 0, 300, 1800),
+        up: THREE.Vector3( 0, 1, 0 ),
     },
     {   //Vista pausa
         left: 0.5,
@@ -52,16 +52,6 @@ function init(){
     OC = false;
     createPerspCamera(-50, 30, -50);
     createOrthoCamera(0, 0, 50);
-
-    for ( let ii = 0; ii < views.length; ++ ii ) {
-
-        const view = views[ ii ];
-        camera.position.fromArray( view.eye );
-        camera.up.fromArray( view.up );
-        if (ii == 0) view.camera = p_camera;
-        else view.camera = o_camera;
-
-    }
 
     createScene();
     addDirLight();
@@ -97,38 +87,37 @@ function animate() {
 
 function render(){
     controls.update();
-    for ( let ii = 0; ii < views.length; ++ ii ) {
-
-        if (pause && ii == 0) continue;
-        if (!pause && ii == 1) continue;
-
-        const view = views[ ii ];
-        const camera = view.camera;
-
-        //view.updateCamera( camera, scene, mouseX, mouseY );
-
-        const left = Math.floor( windowWidth * view.left );
-        const bottom = Math.floor( windowHeight * view.bottom );
-        const width = Math.floor( windowWidth * view.width );
-        const height = Math.floor( windowHeight * view.height );
+    
+    if (PC){
+        const left = Math.floor( windowWidth * views[0].left );
+        const bottom = Math.floor( windowHeight * views[0].bottom );
+        const width = Math.floor( windowWidth * views[0].width );
+        const height = Math.floor( windowHeight * views[0].height );
 
         renderer.setViewport( left, bottom, width, height );
         renderer.setScissor( left, bottom, width, height );
         renderer.setScissorTest( true );
-        renderer.setClearColor( view.background );
+        renderer.setClearColor( views[0].background );
 
-        camera.aspect = width / height;
         camera.updateProjectionMatrix();
 
-        renderer.render( scene, camera );
-
-    }
-    /*if (PC){
         renderer.render(scene, p_camera);
     }
     else if(OC) {
+        const left = Math.floor( windowWidth * views[1].left );
+        const bottom = Math.floor( windowHeight * views[1].bottom );
+        const width = Math.floor( windowWidth * views[1].width );
+        const height = Math.floor( windowHeight * views[1].height );
+
+        renderer.setViewport( left, bottom, width, height );
+        renderer.setScissor( left, bottom, width, height );
+        renderer.setScissorTest( true );
+        renderer.setClearColor( views[0].background );
+
+        camera.updateProjectionMatrix();
+
         renderer.render(scene, o_camera);
-    }*/
+    }
 }
 
 //=============================================================================================================================
@@ -152,6 +141,10 @@ function createPerspCamera(x, y, z){
     p_camera.position.y = y;
     p_camera.position.z = z;
 
+    var pos = views[0];
+    p_camera.position.fromArray( pos.eye );
+    p_camera.up.fromArray( pos.up );
+
     p_camera.lookAt(flag.position);
 
     controls = new THREE.OrbitControls(p_camera, renderer.domElement);
@@ -172,6 +165,10 @@ function createOrthoCamera(x, y, z){
     o_camera.position.x = x;
     o_camera.position.y = y;
     o_camera.position.z = z;
+
+    var pos = views[1];
+    o_camera.position.fromArray( pos.eye );
+    o_camera.up.fromArray( pos.up );
 
     o_camera.lookAt(scene.position);
 }
