@@ -7,6 +7,7 @@ var texture;
 
 function updateBallMovement() {
     ball.rotation.y += 0.01;
+    
     if (ballMovement) {
         posx = ball.position.x + slowDown*0.8;
         posy = (-((posx - 20) * ((posx - 20) / 40)) + 12);
@@ -38,10 +39,7 @@ function createBall() {
 
     geometry = new THREE.SphereGeometry(ballRadius, 32, 32);
 
-    materials[3] = new THREE.MeshPhysicalMaterial({
-        metalness: 0.2,
-        roughness: 0.0,
-        clearcoat: 10,
+    materials[3] = new THREE.MeshPhongMaterial({
         shininess: 100,
         bumpMap: texture,
         bumpScale: 0.05
