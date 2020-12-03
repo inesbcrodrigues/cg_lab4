@@ -1,9 +1,9 @@
-var camera, p_camera, o_camera, renderer, scene, meshText;
+var camera, p_camera, o_camera, renderer, meshText, scene;
 var PC, OC;
 let mesh = [];
 let materials = [];
 var pause = false;
-var flag, controls;
+var flag_object, controls;
 var ilum = true;     //quando true deixa de haver calculo de iluminação
 
 //Light variables
@@ -16,33 +16,16 @@ var pointLight;
 var ballMovement = false;
 var flag;
 
-//Viewport Vector
-var views = [
-    { //Vista perspetiva 
-        left: 0,
-        bottom: 0,
-        width: 0.5,
-        height: 1.0,
-        background: new THREE.Color( 0.5, 0.5, 0.7 ),
-        eye: THREE.Vector3( 0, 300, 1800),
-        up: THREE.Vector3( 0, 1, 0 ),
-    },
-    {   //Vista pausa
-        left: 0.5,
-        bottom: 0,
-        width: 0.5,
-        height: 0.5,
-        background: new THREE.Color( 0.7, 0.5, 0.5 ),
-        eye: [ 0, 1800, 0 ],
-        up: [ 0, 0, 1 ]
-    }
-]
+var width_resize, height_resize;
 
 //===========================================================================================================================
 //FUNCTIONS==================================================================================================================
 //===========================================================================================================================
 function init(){
     'use strict';
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color("white");
+    
     renderer = new THREE.WebGLRenderer({ antialias : true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -50,23 +33,9 @@ function init(){
     document.body.appendChild(renderer.domElement);
     PC = true;
     OC = false;
+    createScene();
     createPerspCamera(-50, 30, -50);
     createOrthoCamera(0, 0, 50);
-
-    createScene();
-    addDirLight();
-    addPointLight();
-    createSkyBox();
-    writePause();
-
-    var axis = new THREE.AxisHelper(30);
-
-    addGrassPlane();
-    createBall();
-
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener('resize', onWindowResize, false );
-    scene.add(axis);
 }
 
 //=============================================================================================================================
@@ -77,8 +46,6 @@ function animate() {
     render();
     requestAnimationFrame(animate);
 
-    //controls.update();
-
     if (!pause){
         updateBallMovement();
         rotateFlag();
@@ -87,36 +54,35 @@ function animate() {
 
 function render(){
     controls.update();
-    
+
+    var SCREEN_W, SCREEN_H;
+    SCREEN_W = window.innerWidth;
+    SCREEN_H = window.innerHeight;
+   
+    var left,bottom,width,height;
+
+
     if (PC){
-        const left = Math.floor( windowWidth * views[0].left );
-        const bottom = Math.floor( windowHeight * views[0].bottom );
-        const width = Math.floor( windowWidth * views[0].width );
-        const height = Math.floor( windowHeight * views[0].height );
-
-        renderer.setViewport( left, bottom, width, height );
-        renderer.setScissor( left, bottom, width, height );
-        renderer.setScissorTest( true );
-        renderer.setClearColor( views[0].background );
-
-        camera.updateProjectionMatrix();
-
+        left = 1; bottom = 1; width = SCREEN_W-2; height = SCREEN_H-2;
+        width_resize = width;
+        height_resize = height;
+        renderer.setViewport (left,bottom,width,height);
+        renderer.setScissor(left,bottom,width,height);
+        renderer.enableScissorTest (true);
+        p_camera.aspect = width/height;
+        p_camera.updateProjectionMatrix();
         renderer.render(scene, p_camera);
     }
     else if(OC) {
-        const left = Math.floor( windowWidth * views[1].left );
-        const bottom = Math.floor( windowHeight * views[1].bottom );
-        const width = Math.floor( windowWidth * views[1].width );
-        const height = Math.floor( windowHeight * views[1].height );
-
-        renderer.setViewport( left, bottom, width, height );
-        renderer.setScissor( left, bottom, width, height );
-        renderer.setScissorTest( true );
-        renderer.setClearColor( views[0].background );
-
-        camera.updateProjectionMatrix();
-
-        renderer.render(scene, o_camera);
+        left = 0.25*SCREEN_W+1; bottom = SCREEN_H/4; width = 0.5*SCREEN_W-2; height = 0.5*SCREEN_H-2;
+        width_resize = width;
+        height_resize = height;
+        renderer.setViewport (left,bottom, width,height);
+        renderer.setScissor(left,bottom, width,height);
+        renderer.enableScissorTest (true);  
+        o_camera.aspect = width/height;
+        o_camera.updateProjectionMatrix();
+        renderer.render (scene, o_camera);
     }
 }
 
@@ -125,10 +91,16 @@ function render(){
 //=============================================================================================================================
 function createScene(){
     'use strict';
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color("white");
-
+    addDirLight();
+    addPointLight();
+    createSkyBox();
+    writePause();
+    addGrassPlane();
+    createBall();
     createFlag();
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener('resize', onWindowResize, false );
 }
 
 function createPerspCamera(x, y, z){
@@ -141,16 +113,11 @@ function createPerspCamera(x, y, z){
     p_camera.position.y = y;
     p_camera.position.z = z;
 
-    var pos = views[0];
-    p_camera.position.fromArray( pos.eye );
-    p_camera.up.fromArray( pos.up );
-
-    p_camera.lookAt(flag.position);
-
-    controls = new THREE.OrbitControls(p_camera, renderer.domElement);
+    
+    controls = new THREE.OrbitControls(p_camera, render.domElement);
     controls.update();
 
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
+    p_camera.lookAt(scene.position);
 }
 
 function createOrthoCamera(x, y, z){
@@ -166,16 +133,11 @@ function createOrthoCamera(x, y, z){
     o_camera.position.y = y;
     o_camera.position.z = z;
 
-    var pos = views[1];
-    o_camera.position.fromArray( pos.eye );
-    o_camera.up.fromArray( pos.up );
-
     o_camera.lookAt(scene.position);
 }
 
-function onDocumentMouseMove( event ) {
-    controls.handleMouseMoveRotate(event);
-}
+
+
 
 function addDirLight(){
     dirLight  = new THREE.DirectionalLight(0xffffff, 2);
@@ -245,9 +207,14 @@ function onKeyDown(e) {
 }
 
 function onWindowResize(){
-    p_camera.aspect = window.innerWidth / window.innerHeight;
-    p_camera.updateProjectionMatrix();
-
+    if(PC) {
+        p_camera.aspect = window.innerWidth / window.innerHeight;
+        p_camera.updateProjectionMatrix();
+    }
+    if(OC) {
+        o_camera.aspect = width_rezis/ window.innerHeight;
+        o_camera.updateProjectionMatrix();
+    }
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
@@ -282,31 +249,6 @@ function handleWireframe(){
 function writePause(){
     var texture = new THREE.TextureLoader().load("pauseTexture.jpg");
     var material = new THREE.MeshBasicMaterial({map: texture});
-    /*var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-
-    context.font = "normal " + 11 + "px Arial";
-
-    var margin = 2;
-    var textWidth = context.measureText("PAUSE").width;
-    canvas.width = 32;
-    canvas.height = 16;
-
-    context.strokeStyle = "white";
-    context.strokeRect(0, 0, canvas.width, canvas.height);
-
-    context.strokeStyle = "red";
-    context.strokeRect(canvas.width / 2 - textWidth / 2 - margin / 2, canvas.height / 2 - 16 / 2  +margin / 2, textWidth + margin, 16 + margin);
-
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillStyle = "green";
-    context.fillText("PAUSE", textWidth / 2, 16 / 2);
-
-    var texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-
-    var material = new THREE.MeshBasicMaterial({map : texture});*/
 
     meshText = new THREE.Mesh(new THREE.PlaneGeometry(40,20, 10, 10), material);
     meshText.overdraw = true;
